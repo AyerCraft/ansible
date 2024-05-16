@@ -1,0 +1,58 @@
+#!/bin/bash
+
+INCLUDE="/usr/local/include/scriptfunc"
+VERFILE="/etc/fedora-release"
+
+if [[ -f ${INCLUDE} ]];then
+	source ${INCLUDE}
+fi
+
+getcurrent() {
+	if [[ -f ${VERFILE} ]];then
+		CVERS=`cat ${VERFILE} | awk '{ print $3 }'`
+		echo -e "Current Fedora Release:\t${CVERS}"
+	else
+		echo -e "Error: No version file present!\t\tFile: ${VERFILE}"
+		exit 1
+	fi
+}
+
+checkvers() {
+	_RE='^[0-9]+$'
+
+	if [[ ! ${NVERS} =~ ${_RE} ]] ; then
+		echo "Error: Not a proper version number" >&2
+		exit 3
+	fi
+	VERDIFF=`expr ${NVERS} - ${CVERS}`
+	if [[ ${VERDIFF} -le 2 ]];then
+		echo -e "New Fedora Release:\t${NVERS}"
+	elif [[ ${VERDIFF} -ge 3 ]];then
+		echo -e "Error: Upgrade difference cannot exceed two versions!"
+		echo -e "Version Difference:\t${VERDIFF}"
+		exit 4
+	fi
+}
+
+preupgrade() {
+	dnf -y upgrade --refresh
+	dnf -y install dnf-plugin-system-upgrade
+}
+
+doupgrade() {
+	dnf -y system-upgrade download --releasever=${NVERS}
+}
+
+
+if [[ ! -z $1 ]];then
+	NVERS=$1
+else
+	echo -e "Error: Must include version number!"
+	echo -e "Example: $0 35"
+	exit 2
+fi
+
+getcurrent
+checkvers
+preupgrade
+doupgrade

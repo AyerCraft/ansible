@@ -1,0 +1,57 @@
+#!/bin/bash
+
+DEBUG=0
+#DEBUG=1
+
+SVR="ipa.ayercraft.net"
+NTP0="0.us.pool.ntp.org"
+NTP1="1.us.pool.ntp.org"
+NTP2="2.us.pool.ntp.org"
+NTP3="3.us.pool.ntp.org"
+LOGFILE="/var/log/freeipa-join.log"
+
+IPACMD=(ipa-client-install)
+if [[ ${DEBUG} -eq 1 ]];then
+	IPACMD+=(-v)
+	IPACMD+=(--log-file=${LOGFILE})
+	if [[ -e ${LOGFILE} ]];then
+		rm -f ${LOGFILE}
+	fi
+fi
+IPACMD+=(-U)
+IPACMD+=(-p {{ 'ipa_user' }})
+IPACMD+=(-w {{ 'ipa_pass' }})
+IPACMD+=(--enable-dns-updates)
+IPACMD+=(--mkhomedir)
+IPACMD+=(--ntp-server=${NTP0})
+IPACMD+=(--ntp-server=${NTP1})
+IPACMD+=(--ntp-server=${NTP2})
+IPACMD+=(--ntp-server=${NTP3})
+IPACMD+=(--subid)
+IPACMD+=(--ssh-trust-dns)
+IPACMD+=(--force-join)
+
+ipajoin() {
+	#ipa-client-install -v \
+	#  -p admin \
+	#  -w ${PASS} \
+	#  --enable-dns-updates \
+	#  --mkhomedir \
+	#  --ntp-server=${NTP0} \
+	#  --ntp-server=${NTP1} \
+	#  --ntp-server=${NTP2} \
+	#  --ntp-server=${NTP3} \
+	#  --subid \
+	#  --ssh-trust-dns
+	${IPACMD[@]}
+}
+
+ipapkginst() {
+	dnf -y install ipa-client
+}
+
+if [[ ! -f /usr/sbin/ipa-client-install ]];then
+	ipapkginst
+fi
+
+ipajoin

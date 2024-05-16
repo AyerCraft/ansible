@@ -1,0 +1,16 @@
+#!/bin/bash
+
+rhn-subscribe() {
+	SUBCMD=(/usr/sbin/subscription-manager)
+	SUBCMD+=(register)
+	SUBCMD+=(--username={{ 'rhn_user'}})
+	SUBCMD+=(--password={{ 'rhn_pass' }})
+	$(SUBCMD[@])
+	#/usr/sbin/subscription-manager register \
+	#  --username=${USER} \
+	#  --password=${PASS}
+}
+
+if [[ -f /usr/sbin/subscription-manager ]];then
+	rhn-subscribe
+fi

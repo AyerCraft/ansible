@@ -1,0 +1,307 @@
+#!/bin/bash
+source /usr/local/include/ifsfix
+source /usr/local/include/colorization
+
+colorize
+
+NULL="/dev/null"
+DEVNULL=${NULL}
+_EXTS='3gp
+asf
+avi
+jpg
+mkv
+mp4
+mov
+png
+wmv'
+
+### Bash Logging Functions #######################################################################
+dlog() {
+	# Debug Output Logging Function
+	_MSG="$@"
+	if [[ ${DEBUG} -eq 1 ]];then
+		echo -e "  (d) ${FSET}${_MSG}"
+	fi
+}
+
+elog() {
+	# Error Output Logging Function
+	_MSG="$@"
+	echo -e "${FSET}${_MSG}" >&2
+}
+
+olog() {
+	# Generic Output Logging Function
+	_MSG="$@"
+	echo -e "${_MSG}"
+}
+
+vlog() {
+	# Verbose Output Logging Function
+	_MSG="$@"
+	if [[ ${VERBOSE} -eq 1 ]];then
+		echo -e "(v) ${_MSG}"
+	fi
+}
+##################################################################################################
+
+### File Handling Functions ######################################################################
+filesplit() {
+	FILE=$1
+	FNAME=$(basename -- "$FILE")
+	FEXT="${FNAME##*.}"
+	FHEAD="${FNAME%.*}"
+}
+
+
+lds() {
+	for DIR in `ls`;do
+		if [[ -d ${DIR} ]];then
+			echo ${DIR}
+		fi
+	done
+}
+
+lfs() {
+	for FILE in `ls`;do
+		if [[ -f ${FILE} ]];then
+			echo ${FILE}
+		fi
+	done
+}
+
+createtext() {
+	for DIR in `lds`;do
+		touch ${DIR}/tmpfile.txt
+	done
+}
+
+removetext() {
+	rm -f */tmpfile.txt
+}
+
+timedate() {
+	TIMEDATE=`date +%R:%S`
+	echo -en "\t${__PUR}[${__ORA}${TIMEDATE}${__PUR}]\t"
+}
+
+pytimedate() {
+	TIMEDATE=`date +%R:%S' '%p`
+	echo -en "${__GRE}(${__ORA}${TIMEDATE}${__GRE})\t:INFO\t:script\t\t:\t"
+}
+
+check_dir() {
+	if [[ ! -z $1 ]];then
+		DIR=$1
+		if [[ ! -d ${DIR} ]];then
+			mkdir -p ${DIR}
+		fi
+	else
+		echo -e "`timedate`Usage: ${__ORA}$0 ${__BLU}{directory}${__NC}"
+	fi
+}
+
+check_lock() {
+	LOCKED=0
+	if [[ -z ${LOCKFILE} ]];then
+		if [[ ! -z $1 ]];then
+			LOCKFILE="$1.lock"
+		else
+			echo -e "`timedate`Usage: ${__ORA}$0 ${__BLU}{lockfile}${__NC}"
+		fi
+	fi
+
+	if [[ -e ${LOCKFILE} ]];then
+		LOCKED=1
+	else
+		echo -e "`timedate`Locking file:\t${__BLU}${FILE}${__NC}"
+		echo `hostname` > ${LOCKFILE}
+	fi
+}
+
+clean_lock() {
+	if [[ -z ${LOCKFILE} ]];then
+		if [[ ! -z $1 ]];then
+			LOCKFILE=$1
+			echo -e "`timedate`Cleaning lock file:\t${__BLU}${LOCKFILE}${__NC}"
+			rm -f ${LOCKFILE}
+		else
+			echo -e "`timedate`Usage: ${__ORA}$0 ${__BLU}{lockfile}${__NC}"
+		fi
+	else
+		echo -e "`timedate`Cleaning lock file:\t${__BLU}${LOCKFILE}${__NC}"
+		rm -f ${LOCKFILE}
+	fi
+}
+
+_fixperms() {
+	#_COUNT=0
+	#_TOTAL=$(find . -maxdepth 1 -type f -iname "*${_EXT}" | sed -e 's/^\.\///g' | sort -u | wc -l)
+	for _EXT in ${_EXTS};do
+		for _FILE in `find . -maxdepth 1 -type f -iname "*${_EXT}" | sed -e 's/^\.\///g' | sort -u`;do
+			#_COUNT=$(expr ${_COUNT} + 1)
+			#echo -e "\t`timedate`${__ORA}(${__YEL}${_COUNT}${_PUR}/${__GRE}${_TOTAL}${__ORA})\t${__PUR}${_FILE}${__NC}"
+			chmod 664 ${_FILE}
+		done
+	done
+}
+
+### BASH Stack Implementation Using Arrays #######################################################
+
+# Create a new stack.
+#   Usage:		stack_new [name]
+#   Example:	stack_new FILES
+#
+# Destroy a stack
+#   Usage:		stack_destroy [name]
+#   Example:	stack_destroy FILES
+#
+# Push one or more items onto a stack.
+#   Usage:		stack_push [name] item ...
+#   Example:	stack_push FILES "/etc/hosts"
+#
+# Print a stack to stdout.
+#   Usage:		stack_print [name]
+#   Example:	stack_print FILES
+#
+# Get the size of a stack
+#   Usage:		stack_size [name] [var]
+#   Example:	stack_size FILES STACKSIZE
+#				echo "Stack Size is ${STACKSIZE}"
+#
+# Pop the top element from the stack.
+# Usage:		stack_pop [name] [var]
+# Example:		stack_pop FILES FILE
+#				echo "Stack Current: ${FILE}"
+
+function stack_new
+{
+    : ${1?'Missing stack name'}
+    if stack_exists $1
+    then
+        echo "Stack already exists -- $1" >&2
+        return 1
+    fi
+
+    eval "declare -ag _stack_$1"
+    eval "declare -ig _stack_$1_i"
+    eval "let _stack_$1_i=0"
+    return 0
+}
+
+function stack_destroy
+{
+    : ${1?'Missing stack name'}
+    eval "unset _stack_$1 _stack_$1_i"
+    return 0
+}
+
+function stack_push
+{
+    : ${1?'Missing stack name'}
+    : ${2?'Missing item(s) to push'}
+
+    if no_such_stack $1
+    then
+        echo "No such stack -- $1" >&2
+        return 1
+    fi
+
+    stack=$1
+    shift 1
+
+    while (( $# > 0 ))
+    do
+        eval '_i=$'"_stack_${stack}_i"
+        eval "_stack_${stack}[$_i]='$1'"
+        eval "let _stack_${stack}_i+=1"
+        shift 1
+    done
+
+    unset _i
+    return 0
+}
+
+function stack_print
+{
+    : ${1?'Missing stack name'}
+
+    if no_such_stack $1
+    then
+        echo "No such stack -- $1" >&2
+        return 1
+    fi
+
+    tmp=""
+    eval 'let _i=$'_stack_$1_i
+    while (( $_i > 0 ))
+    do
+        let _i=${_i}-1
+        eval 'e=$'"{_stack_$1[$_i]}"
+        tmp="$tmp $e"
+    done
+    echo "(" $tmp ")"
+}
+
+function stack_size
+{
+    : ${1?'Missing stack name'}
+    : ${2?'Missing name of variable for stack size result'}
+    if no_such_stack $1
+    then
+        echo "No such stack -- $1" >&2
+        return 1
+    fi
+    eval "$2"='$'"{#_stack_$1[*]}"
+}
+
+function stack_pop
+{
+    : ${1?'Missing stack name'}
+    : ${2?'Missing name of variable for popped result'}
+
+    eval 'let _i=$'"_stack_$1_i"
+    if no_such_stack $1
+    then
+        echo "No such stack -- $1" >&2
+        return 1
+    fi
+
+    if [[ "$_i" -eq 0 ]]
+    then
+        echo "Empty stack -- $1" >&2
+        return 1
+    fi
+
+    let _i-=1
+    eval "$2"='$'"{_stack_$1[$_i]}"
+    eval "unset _stack_$1[$_i]"
+    eval "_stack_$1_i=$_i"
+    unset _i
+    return 0
+}
+
+function no_such_stack
+{
+    : ${1?'Missing stack name'}
+    stack_exists $1
+    ret=$?
+    declare -i x
+    let x="1-$ret"
+    return $x
+}
+
+function stack_exists
+{
+    : ${1?'Missing stack name'}
+
+    eval '_i=$'"_stack_$1_i"
+    if [[ -z "$_i" ]]
+    then
+        return 1
+    else
+        return 0
+    fi
+}
+##################################################################################################
