@@ -1,0 +1,22 @@
+---
+- hosts: all
+  gather_facts: True
+  become: True
+  serial: 1
+
+  collections:
+    - redhatinsights.insights
+    - community.general
+
+  tasks:
+    - name: {{ ansible_distribution }} RHSM System Subscribe
+      community.general.redhat_subscription
+        state: present
+        auto_attach: true
+        username: "{{ lookup('env', 'redhat_portal_username') }}"
+        password: "{{ lookup('env', 'redhat_portal_password') }}"
+      when: ansible_distribution == 'RedHat' and ansible_os_family == 'RedHat' and ansible_distribution_major_version >= '7'
+
+    - include_role:
+        name: insights_client
+      when: ansible_os_family == 'RedHat' and ansible_distribution_major_version >= '7'
