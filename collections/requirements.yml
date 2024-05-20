@@ -1,20 +1,20 @@
 collections:
-  - name: ansible.netcommon
+  #- name: ansible.netcommon
 
   - name: ansible.network
 
   - name: ansible.posix
     source: https://galaxy.ansible.com
 
-  - name: ansible.scm
+    #- name: ansible.scm
 
-  - name: ansible.security
+    #- name: ansible.security
 
-  - name: ansible.snmp
+    #- name: ansible.snmp
 
   - name: ansible.utils
 
-  - name: ansible.windows
+    #- name: ansible.windows
 
   - name: community.general
     source: https://galaxy.ansible.com
@@ -25,8 +25,8 @@ collections:
 
   - name: redhat.rhel_system_roles
 
-  - name: redhat.satellite
+    #- name: redhat.satellite
 
-  - name: redhat.satellite_operations
+    #- name: redhat.satellite_operations
 
   - name: vmware.vmware
