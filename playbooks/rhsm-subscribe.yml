@@ -2,7 +2,7 @@
 - hosts: all
   gather_facts: True
   become: True
-  serial: 1
+  strategy: free
 
   collections:
     - redhatinsights.insights
