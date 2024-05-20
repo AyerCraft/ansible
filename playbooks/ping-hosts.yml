@@ -2,7 +2,9 @@
 - name: Ping Inventory Hosts
   hosts: all
   gather_facts: no
+  become: no
 
   tasks:
     - name: Ping Host
-      ansible.builtin.ping:
+      #ansible.builtin.ping:
+      ping:
