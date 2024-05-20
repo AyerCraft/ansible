@@ -9,7 +9,7 @@
     - community.general
 
   tasks:
-    - name: {{ ansible_distribution }} RHSM System Subscribe
+    - name: RedHat RHSM System Subscribe
       community.general.redhat_subscription
         state: present
         auto_attach: true
