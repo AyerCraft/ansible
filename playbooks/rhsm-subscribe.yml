@@ -10,7 +10,7 @@
 
   tasks:
     - name: RedHat RHSM System Subscribe
-      community.general.redhat_subscription
+      community.general.redhat_subscription:
         state: present
         auto_attach: true
         username: "{{ lookup('credential', '(redhat) Subscription Management', 'username') }}"
