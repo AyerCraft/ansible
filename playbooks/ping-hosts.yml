@@ -6,6 +6,6 @@
 
   tasks:
     - name: Ping Host
-      #ansible.builtin.ping:
-      net_ping:
-        dest: "{{ ansible_host }}"
+      ansible.builtin.ping:
+      #net_ping:
+      #  dest: "{{ ansible_host }}"
