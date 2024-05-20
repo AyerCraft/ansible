@@ -1,15 +1,32 @@
 collections:
-  # Install a collection from Ansible Galaxy.
-  - name: community.general
-    version: ">=9.0.0"
-    source: https://galaxy.ansible.com
+  - name: ansible.netcommon
+
+  - name: ansible.network
 
   - name: ansible.posix
     source: https://galaxy.ansible.com
 
+  - name: ansible.scm
+
+  - name: ansible.security
+
+  - name: ansible.snmp
+
+  - name: ansible.utils
+
+  - name: ansible.windows
+
+  - name: community.general
+    source: https://galaxy.ansible.com
+
+  - name: redhat.insights
+
+  - name: redhat.rhel_idm
+
   - name: redhat.rhel_system_roles
 
+  - name: redhat.satellite
+
+  - name: redhat.satellite_operations
+
   - name: vmware.vmware
-#ansible.posix            1.5.4
-#redhat.rhel_system_roles 1.23.0
-#vmware.vmware            1.1.0
