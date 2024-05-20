@@ -13,8 +13,8 @@
       community.general.redhat_subscription
         state: present
         auto_attach: true
-        username: "{{ lookup('env', 'redhat_portal_username') }}"
-        password: "{{ lookup('env', 'redhat_portal_password') }}"
+        username: "{{ lookup('credential', '(redhat) Subscription Management', 'username') }}"
+        password: "{{ lookup('credential', '(redhat) Subscription Management', 'password') }}"
       when: ansible_distribution == 'RedHat' and ansible_os_family == 'RedHat' and ansible_distribution_major_version >= '7'
 
     - include_role:
