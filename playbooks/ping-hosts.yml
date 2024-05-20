@@ -7,4 +7,4 @@
   tasks:
     - name: Ping Host
       #ansible.builtin.ping:
-      ping:
+      net_ping:
