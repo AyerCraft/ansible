@@ -1,11 +1,9 @@
 ---
-- name: Ping Inventory Hosts
+- name: Ansible Ping Inventory Hosts
   hosts: all
   gather_facts: no
   become: no
 
   tasks:
-    - name: Ping Host
+    - name: Ansible ping Host
       ansible.builtin.ping:
-      #net_ping:
-      #  dest: "{{ ansible_host }}"
