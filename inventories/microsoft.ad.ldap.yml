@@ -1,3 +1,4 @@
+---
 plugin: microsoft.ad.ldap
 search_base: cn=computers,cn=accounts,dc=ayercraft,dc=net
 attributes:
