@@ -30,3 +30,4 @@ collections:
     #- name: redhat.satellite_operations
 
   - name: vmware.vmware
+
