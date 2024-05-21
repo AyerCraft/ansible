@@ -13,14 +13,6 @@
       community.general.redhat_subscription:
         state: present
         auto_attach: true
-          #username: "{{ lookup('credential', '(redhat) Subscription Management', 'username') }}"
-          #password: "{{ lookup('credential', '(redhat) Subscription Management', 'password') }}"
-          #username: "{{ lookup('ansible.builtin.env', 'RHSM_USER') }}"
-          #password: "{{ lookup('ansible.builtin.env', 'RHSM_PASS') }}"
         username: '{{ rhsm_username }}'
         password: '{{ rhsm_password }}'
       when: ansible_distribution == 'RedHat' and ansible_os_family == 'RedHat' and ansible_distribution_major_version >= '7'
-
-        #- include_role:
-        #    name: insights_client
-        # when: ansible_os_family == 'RedHat' and ansible_distribution_major_version >= '7'
