@@ -1,14 +1,26 @@
 plugin: microsoft.ad.ldap
 
-server: '{{ ldap_server }}'
-port: '{{ ldap_port }}'
-username: '{{ ldap_username }}'
-password: '{{ ldap_password }}'
-auth_protocol: '{{ ldap_auth_protocol }}'
-ca_cert: '{{ ldap_ca_cert }}'
-cert_validation: '{{ ldap_cert_validation }}'
-certificate: '{{ ldap_certificate }}'
-certificate_key: '{{ ldap_certificate_key }}'
+#server: '{{ ldap_server }}'
+#port: '{{ ldap_port }}'
+#username: '{{ ldap_username }}'
+#password: '{{ ldap_password }}'
+#auth_protocol: '{{ ldap_auth_protocol }}'
+#ca_cert: '{{ ldap_ca_cert }}'
+#cert_validation: '{{ ldap_cert_validation }}'
+#certificate: '{{ ldap_certificate }}'
+#certificate_key: '{{ ldap_certificate_key }}'
+#certificate_password: '{{ ldap_certificate_password }}'
+
+server: '{{ lookup("ansible.builtin.env", "MICROSOFT_AD_LDAP_SERVER") }}'
+port: '{{ lookup("ansible.builtin.env", "MICROSOFT_AD_LDAP_PORT") }}'
+username: '{{ lookup("ansible.builtin.env", "MICROSOFT_AD_LDAP_USERNAME") }}'
+password: '{{ lookup("ansible.builtin.env", "MICROSOFT_AD_LDAP_PASSWORD") }}'
+auth_protocol: '{{ lookup("ansible.builtin.env", "MICROSOFT_AD_LDAP_AUTH_PROTOCOL") }}'
+ca_cert: '{{ lookup("ansible.builtin.env", "MICROSOFT_AD_LDAP_CA_CERT") }}'
+cert_validation: '{{ lookup("ansible.builtin.env", "MICROSOFT_AD_LDAP_CERT_VALIDATION") }}'
+certificate: '{{ lookup("ansible.builtin.env", "MICROSOFT_AD_LDAP_CERTIFICATE") }}'
+certificate_key: '{{ lookup("ansible.builtin.env", "MICROSOFT_AD_LDAP_CERTIFICATE_KEY") }}'
+certificate_password: '{{ lookup("ansible.builtin.env", "MICROSOFT_AD_LDAP_CERTIFICATE_PASSWORD") }}'
 
 search_base: cn=computers,cn=accounts,dc=ayercraft,dc=net
 attributes:
