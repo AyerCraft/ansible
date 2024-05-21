@@ -1,4 +1,15 @@
 plugin: microsoft.ad.ldap
+
+server: '{{ ldap_server }}'
+port: '{{ ldap_port }}'
+username: '{{ ldap_username }}'
+password: '{{ ldap_password }}'
+auth_protocol: '{{ ldap_auth_protocol }}'
+ca_cert: '{{ ldap_ca_cert }}'
+cert_validation: '{{ ldap_cert_validation }}'
+certificate: '{{ ldap_certificate }}'
+certificate_key: '{{ ldap_certificate_key }}'
+
 search_base: cn=computers,cn=accounts,dc=ayercraft,dc=net
 attributes:
   fqdn:
