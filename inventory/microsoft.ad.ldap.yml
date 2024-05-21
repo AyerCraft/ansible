@@ -1,0 +1,29 @@
+plugin: microsoft.ad.ldap
+search_base: cn=computers,cn=accounts,dc=ayercraft,dc=net
+attributes:
+  fqdn:
+filter_without_computer: (objectClass=nshost)
+
+#bind_dn: uid=ansible,cn=users,cn=accounts,dc=example,dc=com
+#dn: fqdn=ansible.example.com,cn=computers,cn=accounts,dc=example,dc=com
+#fqdn: ansible.example.com
+#nsHardwarePlatform: x86_64
+#nsOsVersion: 5.14.0-362.18.1.el9_3.x86_64
+#objectClass: ipaobject
+#objectClass: nshost
+#objectClass: ipahost
+#objectClass: pkiuser
+#objectClass: ipaservice
+#objectClass: krbprincipalaux
+#objectClass: krbprincipal
+#objectClass: ieee802device
+#objectClass: ipasshhost
+#objectClass: top
+#objectClass: ipaSshGroupOfPubKeys
+#cn: ansible.example.com
+#serverHostName: ansible
+#krbPrincipalName: host/ansible.example.com@EXAMPLE.COM
+#krbCanonicalName: host/ansible.example.com@EXAMPLE.COM
+#managedBy: fqdn=ansible.example.com,cn=computers,cn=accounts,dc=example,dc=com
+#ipaUniqueID: 43abc1f2-d1f4-11ee-97a7-eafd60160ae6
+#enrolledBy: uid=admin,cn=users,cn=accounts,dc=example,dc=com
