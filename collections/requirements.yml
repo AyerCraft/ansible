@@ -29,5 +29,5 @@ collections:
 
     #- name: redhat.satellite_operations
 
-  - name: vmware.vmware
+    #- name: vmware.vmware
 
