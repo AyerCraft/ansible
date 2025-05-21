@@ -21,7 +21,7 @@ collections:
 
     #- name: redhat.insights
 
-  - name: redhat.rhel_idm
+    #- name: redhat.rhel_idm
 
   - name: redhat.rhel_system_roles
 
