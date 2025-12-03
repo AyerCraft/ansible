@@ -1,0 +1,70 @@
+#!/bin/bash
+
+ANONUID="65534"
+ANONGID="6000"
+SRCD="/etc/exports.d"
+DSTD="/root/exports.d"
+#SRCD="/tmp/unas/exports.d"
+
+backup() {
+    if [[ ! -d ${DSTD} ]];then
+        if [[ -d ${SRCD} ]];then
+            cp -a ${SRCD} .
+        fi
+    fi
+}
+
+
+fixexport() {
+	echo
+    cat ${EFILE};echo
+    sed -i "s/all_squash/no_root_squash/g" ${EFILE}
+    sed -i "s/anonuid=977/anonuid=${ANONUID}/g" ${EFILE}
+    sed -i "s/anongid=988/anongid=${ANONGID}/g" ${EFILE}
+    cat ${EFILE};echo
+}
+
+fixjson() {
+	echo
+    cat ${JFILE};echo
+    sed -i 's/\"allSquash\":true/\"allSquash\":false/g' ${JFILE}
+    sed -i "s/\"anonUID\":{\"id\":977}/\"anonUID\":{\"id\":${ANONUID}}/g" ${JFILE}
+    sed -i "s/\"anonGID\":{\"id\":988}/\"anonGID\":{\"id\":${ANONGID}}/g" ${JFILE}
+    cat ${JFILE};echo
+}
+
+backup
+
+cd ${SRCD}
+for EFILE in $(ls *exports);do
+	JFILE=$(echo ${EFILE} | sed -e "s/exports/json/g")
+    echo 
+    echo -e "${EFILE}"
+	fixexport
+    echo -e "${JFILE}"
+	fixjson
+    echo 
+done
+
+exportfs -r
+
+#/var/nfs/shared/crypt_fs 192.168.10.40(rw,async,no_subtree_check,crossmnt,all_squash,anonuid=977,anongid=988)
+
+#	{
+#	  "type":"shared",
+#	  "id":"d2a94be0-0bc6-4daa-93c9-3dd8a7ca4dbd",
+#	  "name":"books",
+#	  "root_path":"/volume/2747f322-6424-43e0-b489-690e7218be8a/.srv/.unifi-drive",
+#	  "clients":[
+#	    {
+#	      "hostname":"192.168.10.40",
+#	      "readonly":false,
+#	      "noSubtreeCheck":true,
+#	      "crossmnt":true,
+#	      "allSquash":true,
+#	      "anonUID":{"id":977},
+#	      "anonGID":{"id":988},
+#	      "async":true
+#	    }
+#	  ]
+#	}

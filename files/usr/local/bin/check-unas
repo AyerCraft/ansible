@@ -1,0 +1,44 @@
+#!/bin/bash
+
+UNAS="unas-east"
+#UNAS="unas-west"
+
+OIFS=${IFS}
+INC="/usr/local/include/scriptfunc"
+TEST=".test"
+
+if [[ -f  ${INC} ]];then
+	source "${INC}"
+fi
+
+BASEDIR="/opt/unas"
+DLIST="books movies music pictures television"
+
+IFS=${OIFS}
+
+create_file() {
+	DIR="${BASEDIR}/${DITEM}"
+	TFILE="${DIR}/${TEST}"
+	$(touch ${TFILE})
+	RESULT=$?
+	if [[ ${RESULT} -ne 0 ]];then
+		BROKEN=1
+	fi
+}
+
+remove_file() {
+	DIR="${BASEDIR}/${DITEM}"
+	TFILE="${DIR}/${TEST}"
+	$(rm -f ${TFILE})
+	RESULT=$?
+}
+
+for DITEM in ${DLIST[@]};do
+	create_file
+	ls -l ${TFILE}
+	remove_file
+done
+
+if [[ ${BROKEN} -eq 1 ]];then
+	ssh ${UNAS} "./fixexports"
+fi
